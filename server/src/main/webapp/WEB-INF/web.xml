@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:/applicationContext.xml</param-value>
+  </context-param>
+
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <listener>
+    <listener-class>org.onehippo.forge.jcrshell.servlet.JcrShellSessionAttacher</listener-class>
+  </listener>
+
+  <filter>
+    <filter-name>JcrSessionFilter</filter-name>
+    <filter-class>org.onehippo.forge.jcrshell.servlet.JcrShellSessionFilter</filter-class>
+  </filter>
+
+  <servlet>
+    <servlet-name>JcrShellResources</servlet-name>
+    <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet>
+    <servlet-name>RepositoryServlet</servlet-name>
+    <servlet-class>org.hippoecm.repository.RepositoryServlet</servlet-class>
+    <init-param>
+      <param-name>repository-directory</param-name>
+      <param-value>WEB-INF/storage</param-value>
+    </init-param>
+    <init-param>
+      <param-name>repository-config</param-name>
+      <param-value>repository.xml</param-value>
+    </init-param>
+    <load-on-startup>4</load-on-startup>
+  </servlet>
+
+  <filter-mapping>
+    <filter-name>JcrSessionFilter</filter-name>
+    <url-pattern>/rest/*</url-pattern>
+  </filter-mapping>
+  <servlet-mapping>
+    <servlet-name>JcrShellResources</servlet-name>
+    <url-pattern>/rest/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>RepositoryServlet</servlet-name>
+    <url-pattern>/repository/*</url-pattern>
+  </servlet-mapping>
+
+</web-app>

@@ -1,0 +1,71 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+      xsi:schemaLocation="
+         http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+         http://cxf.apache.org/jaxrs
+         http://cxf.apache.org/schemas/jaxrs.xsd">
+
+  <import resource="classpath:META-INF/cxf/cxf.xml"/>
+  <!-- import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/ -->
+  <import resource="classpath:META-INF/cxf/cxf-extension-jaxrs-binding.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
+
+    <bean id="jaxrsRestJacksonObjectMapper" class="org.codehaus.jackson.map.ObjectMapper">
+    </bean>
+
+    <bean id="jaxrsRestJacksonJaxbIntrospector" class="org.codehaus.jackson.xc.JaxbAnnotationIntrospector">
+    </bean>
+
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+      <property name="targetObject">
+        <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+          <property name="targetObject" ref="jaxrsRestJacksonObjectMapper" />
+          <property name="propertyPath" value="serializationConfig"/>
+        </bean>
+      </property>
+      <property name="targetMethod" value="setAnnotationIntrospector"/>
+      <property name="arguments">
+        <list>
+          <ref bean="jaxrsRestJacksonJaxbIntrospector" />
+        </list>
+      </property>
+    </bean>
+
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+      <property name="targetObject">
+        <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+          <property name="targetObject" ref="jaxrsRestJacksonObjectMapper" />
+          <property name="propertyPath" value="deserializationConfig"/>
+        </bean>
+      </property>
+      <property name="targetMethod" value="setAnnotationIntrospector"/>
+      <property name="arguments">
+        <list>
+          <ref bean="jaxrsRestJacksonJaxbIntrospector" />
+        </list>
+      </property>
+    </bean>
+
+    <bean id="jaxrsRestJsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider">
+      <property name="mapper" ref="jaxrsRestJacksonObjectMapper" />
+    </bean>
+
+    <jaxrs:server id="completion"
+        serviceClass="org.onehippo.forge.jcrshell.servlet.CompletionResource"
+        address="/complete">
+        <jaxrs:providers>
+          <ref bean="jaxrsRestJsonProvider" />
+        </jaxrs:providers>
+    </jaxrs:server>
+
+    <jaxrs:server id="execution"
+        serviceClass="org.onehippo.forge.jcrshell.servlet.ExecutionResource"
+        address="/execute">
+        <jaxrs:providers>
+          <ref bean="jaxrsRestJsonProvider" />
+        </jaxrs:providers>
+    </jaxrs:server>
+
+</beans>

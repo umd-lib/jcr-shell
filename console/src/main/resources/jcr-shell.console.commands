@@ -1,0 +1,16 @@
+org.onehippo.forge.jcrshell.commands.Credentials
+org.onehippo.forge.jcrshell.commands.Exit
+org.onehippo.forge.jcrshell.commands.FileCd
+org.onehippo.forge.jcrshell.commands.FileList
+org.onehippo.forge.jcrshell.commands.FilePwd
+org.onehippo.forge.jcrshell.commands.Login
+org.onehippo.forge.jcrshell.commands.Logout
+org.onehippo.forge.jcrshell.commands.NodeExport
+org.onehippo.forge.jcrshell.commands.NodeImport
+org.onehippo.forge.jcrshell.commands.Repository
+org.onehippo.forge.jcrshell.commands.Reset
+org.onehippo.forge.jcrshell.commands.Server
+org.onehippo.forge.jcrshell.commands.CndExport
+org.onehippo.forge.jcrshell.commands.CndImport
+org.onehippo.forge.jcrshell.commands.PropLoad
+org.onehippo.forge.jcrshell.commands.PropStore

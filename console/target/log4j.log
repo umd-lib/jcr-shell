@@ -1,0 +1,1 @@
+23.05.2016 16:47:50 INFO  [org.onehippo.forge.jcrshell.CommandHelper.loadCommandsFromResource():209] Commands file not found on classpath: '/extra.commands'

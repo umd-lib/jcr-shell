@@ -1,0 +1,53 @@
+<html>
+  <head>
+    <title>JCR Shell</title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.js"></script>
+    <script type="text/javascript" src="jsshell.js"></script>
+    <style>
+#command-line {
+  width: 100%;
+  padding-left: 50px;
+}
+#command-line span {
+}
+#command-line input {
+  border: 1px solid #ccc;
+  width: 800px;
+}
+span.debug {
+  color: blue;
+}
+span.ok {
+  color: green;
+}
+span.warn {
+  color: yellow;
+}
+span.error {
+  color: red;
+}
+#candidates li {
+  display: inline;
+  list-style-type: none;
+  padding-right: 20px;
+  font-family: monospace;
+}
+pre {
+  margin: 0px;
+  padding: 0px;
+}
+tt{
+  white-space: pre;
+}
+    </style>
+  </head>
+  <body>
+    <div id="output">
+    </div>
+    <ul id="candidates"></ul>
+    <div id="command-line">
+      <span>jcr-shell: </span>
+      <input id="prompt" />
+    </div>
+  </body>
+</html>
