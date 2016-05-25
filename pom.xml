@@ -47,6 +47,19 @@
     <url>http://hudson.onehippo.org/job/Hippo%20Forge%20JCR%20Shell%20Trunk/</url>
   </ciManagement>
 
+  <distributionManagement>
+    <repository>
+      <id>nexus</id>
+      <name>Releases</name>
+      <url>https://maven.lib.umd.edu/nexus/content/repositories/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>nexus</id>
+      <name>Snapshots</name>
+      <url>https://maven.lib.umd.edu/nexus/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
   <!-- versions -->
   <properties>
     <hippo.repository.version>2.18.01</hippo.repository.version>
