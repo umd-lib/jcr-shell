@@ -24,8 +24,8 @@ import org.onehippo.forge.jcrshell.JcrShellPrinter;
 public class Server extends AbstractCommand {
 
     public Server() {
-        super("server", new String[] {}, "server [<rmi_url>|<http(s)_url>]",
-                "show current server or set server JCR/RMI url or JCR/WebDAV HTTP url to connect to");
+        super("server", new String[] {}, "server [<rmi_url>]",
+                "show current server or set server rmi url to connect to");
     }
 
     /**

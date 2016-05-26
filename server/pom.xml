@@ -55,7 +55,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-resources</artifactId>
+      <artifactId>hippo-repository-dependencies</artifactId>
       <type>war</type>
     </dependency>
     <dependency>

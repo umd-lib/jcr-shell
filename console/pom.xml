@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.forge.jcrshell</groupId>
     <artifactId>jcrshell</artifactId>
-    <version>1.01.03</version>
+    <version>1.01.03-SNAPSHOT</version>
   </parent>
 
   <name>Hippo JCR Shell Console</name>
@@ -28,11 +28,12 @@
   <packaging>jar</packaging>
 
   <dependencies>
-    <dependency>
-      <groupId>org.onehippo.forge.jcrshell</groupId>
-      <artifactId>jcrshell-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+      <dependency>
+          <groupId>org.onehippo.forge.jcrshell</groupId>
+          <artifactId>jcrshell-core</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
@@ -87,8 +88,8 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <target>1.6</target>
-          <source>1.6</source>
+          <target>1.7</target>
+          <source>1.7</source>
         </configuration>
         <version>2.3.2</version>
       </plugin>

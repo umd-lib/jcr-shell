@@ -34,130 +34,130 @@ import java.util.Properties;
  */
 public final class JcrShell {
 
-    /** Properties */
-    private static final String VERSION_PROPERTIES = "/jcr-shell.properties";
-    private static final String DEFAULT_COMMANDS = "/jcr-shell.commands";
-    private static final String CONSOLE_COMMANDS = "/jcr-shell.console.commands";
-    private static final String EXTRA_COMMANDS = "/extra.commands";
+  /** Properties */
+  private static final String VERSION_PROPERTIES = "/jcr-shell.properties";
+  private static final String DEFAULT_COMMANDS = "/jcr-shell.commands";
+  private static final String CONSOLE_COMMANDS = "/jcr-shell.console.commands";
+  private static final String EXTRA_COMMANDS = "/extra.commands";
 
 
-    public static final String NOT_CONNECTED_PROMPT = "jcr-shell:>";
-    private static final int MAX_PROMPT_LENGTH = 15;
+  public static final String NOT_CONNECTED_PROMPT = "jcr-shell:>";
+  private static final int MAX_PROMPT_LENGTH = 15;
 
-    /** logger */
-    private static final Logger log = LoggerFactory.getLogger(JcrShell.class);
+  /** logger */
+  private static final Logger log = LoggerFactory.getLogger(JcrShell.class);
 
-    /**
-     * Hide constructor
-     */
-    private JcrShell() {
-    }
+  /**
+   * Hide constructor
+   */
+  private JcrShell() {
+  }
 
-    /**
-     * The main method to start the jcr shell.
-     * @param args ignored
-     * @throws IOException io failure when starting shell
-     */
-    public static void main(final String[] args) throws IOException {
-        final Terminal term = setupTerminal();
-        registerCompleters();
-        registerCommands();
-        registerShutdownHook();
-        if (args.length == 0) {
-            final JcrShellSession session = new JcrShellSession();
-            JcrWrapper.setShellSession(session);
-            session.addListener(new JcrShellSession.SessionListener() {
+  /**
+   * The main method to start the jcr shell.
+   * @param args ignored
+   * @throws IOException io failure when starting shell
+   */
+  public static void main(final String[] args) throws IOException {
+    final Terminal term = setupTerminal();
+    registerCompleters();
+    registerCommands();
 
-                @Override
-                public void onChangePath() {
-                    if (!JcrWrapper.isConnected() || session.getCurrentNode() == null) {
-                        term.setCommandLinePrompt(NOT_CONNECTED_PROMPT);
-                        return;
-                    }
-                    try {
-                        String path = session.getCurrentNode().getPath();
-                        if (path.length() > MAX_PROMPT_LENGTH) {
-                            String dots = "...";
-                            path = dots + path.substring(path.length() - MAX_PROMPT_LENGTH + dots.length());
-                        }
-                        term.setCommandLinePrompt(JcrWrapper.getUsername() + ":" + path + ">");
-                    } catch (RepositoryException e) {
-                        log.info("Unable to determine path while setting prompt", e);
-                        term.setCommandLinePrompt(JcrWrapper.getUsername() + ":[unknown]>");
-                    }
-                }
-            });
+    final JcrShellSession session = new JcrShellSession();
+    JcrWrapper.setShellSession(session);
+    session.addListener(new JcrShellSession.SessionListener() {
 
-            runShell(term);
-        } else {
-            runScript(args);
+      @Override
+      public void onChangePath() {
+        if (!JcrWrapper.isConnected() || session.getCurrentNode() == null) {
+          term.setCommandLinePrompt(NOT_CONNECTED_PROMPT);
+          return;
         }
-    }
-
-    public static Terminal setupTerminal() {
-        Terminal term = new Terminal();
-        term.setCommandLinePrompt(NOT_CONNECTED_PROMPT);
-        StringBuilder version = new StringBuilder();
-        version.append(getName()).append(' ').append(getVersion());
-        version.append(System.getProperty("line.separator"));
-        term.setCommandLineVersion(version.toString());
-        return term;
-    }
-
-    public static void registerCompleters() {
-        CompleterFactory.registerCompleter(Command.ArgumentType.Flags.FILE, FileNameCompleter.class);
-        CompleterFactory.registerCompleter(Command.ArgumentType.Flags.DIRECTORY, DirNameCompleter.class);
-    }
-
-    public static void registerCommands() {
-        CommandHelper.loadCommandsFromResource(DEFAULT_COMMANDS);
-        CommandHelper.loadCommandsFromResource(CONSOLE_COMMANDS);
-        CommandHelper.loadCommandsFromResource(EXTRA_COMMANDS);
-    }
-
-    public static void registerShutdownHook() {
-        Terminal.ShutdownHook sh = Terminal.getShutdownHook();
-        Runtime.getRuntime().addShutdownHook(sh);
-    }
-
-    public static void runShell(Terminal term) {
-        term.start();
-    }
-
-    public static void runScript(final String[] args) {
         try {
-            Terminal.run(new FileInputStream(new File(args[0])), System.out);
-        } catch (FileNotFoundException e) {
-            log.error("Script file not found '{}'", args[0]);
+          String path = session.getCurrentNode().getPath();
+          if (path.length() > MAX_PROMPT_LENGTH) {
+            String dots = "...";
+            path = dots + path.substring(path.length() - MAX_PROMPT_LENGTH + dots.length());
+          }
+          term.setCommandLinePrompt(JcrWrapper.getUsername() + ":" + path + ">");
+        } catch (RepositoryException e) {
+          log.info("Unable to determine path while setting prompt", e);
+          term.setCommandLinePrompt(JcrWrapper.getUsername() + ":[unknown]>");
         }
-    }
+      }
+    });
 
-    public static String getVersion() {
-        return getJcrShellProperty("version");
+    if (args.length == 0) {
+      runShell(term);
+    } else {
+      runScript(args);
     }
+  }
 
-    public static String getName() {
-        return getJcrShellProperty("name");
+  public static Terminal setupTerminal() {
+    Terminal term = new Terminal();
+    term.setCommandLinePrompt(NOT_CONNECTED_PROMPT);
+    StringBuilder version = new StringBuilder();
+    version.append(getName()).append(' ').append(getVersion());
+    version.append(System.getProperty("line.separator"));
+    term.setCommandLineVersion(version.toString());
+    return term;
+  }
+
+  public static void registerCompleters() {
+    CompleterFactory.registerCompleter(Command.ArgumentType.Flags.FILE, FileNameCompleter.class);
+    CompleterFactory.registerCompleter(Command.ArgumentType.Flags.DIRECTORY, DirNameCompleter.class);
+  }
+
+  public static void registerCommands() {
+    CommandHelper.loadCommandsFromResource(DEFAULT_COMMANDS);
+    CommandHelper.loadCommandsFromResource(CONSOLE_COMMANDS);
+    CommandHelper.loadCommandsFromResource(EXTRA_COMMANDS);
+  }
+
+  public static void registerShutdownHook() {
+    Terminal.ShutdownHook sh = Terminal.getShutdownHook();
+    Runtime.getRuntime().addShutdownHook(sh);
+  }
+
+  public static void runShell(Terminal term) {
+    term.start();
+  }
+
+  public static void runScript(final String[] args) {
+    try {
+      Terminal.run(new FileInputStream(new File(args[0])), System.out);
+    } catch (FileNotFoundException e) {
+      log.error("Script file not found '{}'", args[0]);
     }
+  }
 
-    public static String getJcrShellProperty(String name) {
-        InputStream is = JcrShell.class.getResourceAsStream(VERSION_PROPERTIES);
-        if (is != null) {
-            try {
-                Properties pomProps = new Properties();
-                pomProps.load(is);
-                return pomProps.getProperty(name);
-            } catch (IOException e) {
-                log.debug("Unable to find version info in resource " + VERSION_PROPERTIES);
-            } finally {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    log.debug("Error while closing properties input stream", e);
-                }
-            }
+  public static String getVersion() {
+    return getJcrShellProperty("version");
+  }
+
+  public static String getName() {
+    return getJcrShellProperty("name");
+  }
+
+  public static String getJcrShellProperty(String name) {
+    InputStream is = JcrShell.class.getResourceAsStream(VERSION_PROPERTIES);
+    if (is != null) {
+      try {
+        Properties pomProps = new Properties();
+        pomProps.load(is);
+        return pomProps.getProperty(name);
+      } catch (IOException e) {
+        log.debug("Unable to find version info in resource " + VERSION_PROPERTIES);
+      } finally {
+        try {
+          is.close();
+        } catch (IOException e) {
+          log.debug("Error while closing properties input stream", e);
         }
-        return "";
+      }
     }
+    return "";
+  }
 
 }

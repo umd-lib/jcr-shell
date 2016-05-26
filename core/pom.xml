@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.forge.jcrshell</groupId>
     <artifactId>jcrshell</artifactId>
-    <version>1.01.03</version>
+    <version>1.01.03-SNAPSHOT</version>
   </parent>
 
   <name>Hippo JCR Shell Core</name>
@@ -70,10 +70,6 @@
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-jcr-commons</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>jackrabbit-jcr2dav</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>junit</groupId>
@@ -103,8 +99,8 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <target>1.6</target>
-          <source>1.6</source>
+          <target>1.7</target>
+          <source>1.7</source>
         </configuration>
         <version>2.3.2</version>
       </plugin>
@@ -130,5 +126,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>

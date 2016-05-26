@@ -15,54 +15,6 @@
  */
 package org.onehippo.forge.jcrshell;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import javax.jcr.AccessDeniedException;
-import javax.jcr.Item;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.LoginException;
-import javax.jcr.NamespaceException;
-import javax.jcr.NamespaceRegistry;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.PropertyType;
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
-import javax.jcr.SimpleCredentials;
-import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.jcr.Value;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.NodeTypeIterator;
-import javax.jcr.observation.Event;
-import javax.jcr.observation.EventIterator;
-import javax.jcr.observation.EventListener;
-import javax.jcr.observation.ObservationManager;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
-import javax.jcr.version.VersionHistory;
-
-import org.apache.jackrabbit.commons.JcrUtils;
-import org.apache.jackrabbit.jcr2dav.Jcr2davRepositoryFactory;
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
@@ -75,6 +27,26 @@ import org.onehippo.forge.jcrshell.output.TextOutput;
 import org.onehippo.forge.jcrshell.util.HippoJcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.*;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeIterator;
+import javax.jcr.observation.Event;
+import javax.jcr.observation.EventIterator;
+import javax.jcr.observation.EventListener;
+import javax.jcr.observation.ObservationManager;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
+import javax.jcr.version.VersionHistory;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.*;
 
 /**
  * Wrapper class for commonly used jcr calls.
@@ -224,35 +196,22 @@ public final class JcrWrapper {
         if (isConnected()) {
             return;
         }
-
         // get the repository login and get getShellSession()
         String msg;
         Throwable cause;
-        String repositoryAddress = getServer();
-
         try {
             JcrShellPrinter.println("");
             TextOutput text = Output.out();
-
             if (isHippoRepository) {
-                text = text.a("Connecting to Hippo Repository at '" + repositoryAddress + "' : ");
-                HippoRepository repository = HippoRepositoryFactory.getHippoRepository(repositoryAddress);
+                text = text.a("Connecting to Hippo Repository at '" + getServer() + "' : ");
+                HippoRepository repository = HippoRepositoryFactory.getHippoRepository(getServer());
                 getShellSession().session = repository.login(new SimpleCredentials(getUsername(), getPassword()));
             } else {
-                if (repositoryAddress.startsWith("http:") || repositoryAddress.startsWith("https:")) {
-                    Jcr2davRepositoryFactory factory = new Jcr2davRepositoryFactory();
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put(JcrUtils.REPOSITORY_URI, repositoryAddress);
-                    Repository repository = factory.getRepository(params);
-                    getShellSession().session = repository.login(new SimpleCredentials(getUsername(), getPassword()));
-                } else {
-                    text = text.a("Connecting to JCR Repository at '" + repositoryAddress + "' : ");
-                    ClientRepositoryFactory factory = new ClientRepositoryFactory();
-                    Repository repository = factory.getRepository(repositoryAddress);
-                    getShellSession().session = repository.login(new SimpleCredentials(getUsername(), getPassword()));
-                }
+                text = text.a("Connecting to JCR Repository at '" + getServer() + "' : ");
+                ClientRepositoryFactory factory = new ClientRepositoryFactory();
+                Repository repository = factory.getRepository(getServer());
+                getShellSession().session = repository.login(new SimpleCredentials(getUsername(), getPassword()));
             }
-
             setConnected(true);
             setCurrentNode(getShellSession().session.getRootNode());
             JcrShellPrinter.print(text.ok("done."));
@@ -291,16 +250,15 @@ public final class JcrWrapper {
             msg = "Repository exception: " + e.getMessage();
             cause = e;
         } catch (MalformedURLException e) {
-            msg = "Repository url incorrect '" + repositoryAddress + "': " + e.getMessage();
+            msg = "Repository url incorrect '" + getServer() + "': " + e.getMessage();
             cause = e;
         } catch (ClassCastException e) {
             msg = "Wrong repository type: " + e.getMessage();
             cause = e;
         } catch (NotBoundException e) {
-            msg = "Unable to connect to '" + repositoryAddress + "': " + e.getMessage();
+            msg = "Unable to connect to '" + getServer() + "': " + e.getMessage();
             cause = e;
         }
-
         JcrShellPrinter.printErrorln("failed.");
         throw new NoConnectionException(msg, cause);
     }
