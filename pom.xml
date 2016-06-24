@@ -57,7 +57,7 @@
     <snapshotRepository>
       <id>nexus</id>
       <name>Snapshots</name>
-      <url>https://maven.lib.umd.edu/nexus/content/repositories/snapshots</url>
+      <url>https://maven.lib.umd.edu/nexus/content/repositories/legacy-snapshots</url>
     </snapshotRepository>
   </distributionManagement>
 
